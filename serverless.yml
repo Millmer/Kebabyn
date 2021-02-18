@@ -1,0 +1,148 @@
+service: kebabyn
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: eu-central-1
+  stage: dev
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - arn:aws:dynamodb:${self:provider.region}:631452105797:table/Kebabyn-${self:custom.stage}
+        - arn:aws:dynamodb:${self:provider.region}:631452105797:table/Kebabyn-${self:custom.stage}/index/*
+  environment:
+    DYNAMODB_TABLE_NAME: Kebabyn-${self:custom.stage}
+
+custom:
+  stage: "${opt:stage, self:provider.stage}"
+  s3Bucket: kebabyn.com
+  dirPath: kebabyn
+
+functions:
+  registerKebab:
+    handler: back/handler.registerKebab
+    events:
+      - http:
+          path: kebabs/register
+          method: post
+          cors: true
+  listKebabs:
+    handler: back/handler.listKebabRegistrations
+    events:
+      - http:
+          path: kebabs/list
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    ## Specifying the S3 Bucket
+    WebAppS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.s3Bucket}
+        AccessControl: PublicRead
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: index.html
+    OriginAccessIdentity:
+      Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+      Properties:
+        CloudFrontOriginAccessIdentityConfig:
+          Comment: Static assets for Kebabyn
+    ## Specifying the policies to make sure all files inside the Bucket are avaialble to CloudFront
+    WebAppS3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      DependsOn: OriginAccessIdentity
+      Properties:
+        Bucket:
+          Ref: WebAppS3Bucket
+        PolicyDocument:
+          Statement:
+            - Sid: PublicReadGetObject
+              Effect: Allow
+              Principal:
+                CanonicalUser: !GetAtt OriginAccessIdentity.S3CanonicalUserId
+              Action:
+              - s3:GetObject
+              Resource: arn:aws:s3:::${self:custom.s3Bucket}/*
+    ## Specifying the CloudFront Distribution
+    WebAppCloudFrontDistribution:
+      Type: AWS::CloudFront::Distribution
+      DependsOn: OriginAccessIdentity
+      Properties:
+        DistributionConfig:
+          Origins:
+            - DomainName: ${self:custom.s3Bucket}.s3.amazonaws.com
+              ## An identifier for the origin which must be unique within the distribution
+              Id: kebabyn-${self:custom.stage}
+              # CustomOriginConfig:
+              #   HTTPPort: 80
+              #   HTTPSPort: 443
+              #   OriginProtocolPolicy: https-only
+              ## In case you want to restrict the bucket access use S3OriginConfig and remove CustomOriginConfig
+              S3OriginConfig:
+                OriginAccessIdentity: !Join
+                - /
+                - - origin-access-identity
+                  - cloudfront
+                  - !Ref OriginAccessIdentity
+          Enabled: 'true'
+          ## Uncomment the following section in case you are using a custom domain
+          # Aliases:
+          # - mysite.example.com
+          DefaultRootObject: index.html
+          CustomErrorResponses:
+            - ErrorCode: 404
+              ResponseCode: 200
+              ResponsePagePath: /index.html
+          DefaultCacheBehavior:
+            AllowedMethods:
+              - GET
+              - HEAD
+            ## The origin id defined above
+            TargetOriginId: kebabyn-${self:custom.stage}
+            ## Defining if and how the QueryString and Cookies are forwarded to the origin which in this case is S3
+            ForwardedValues:
+              QueryString: 'false'
+              Cookies:
+                Forward: none
+            ## The protocol that users can use to access the files in the origin. To allow HTTP use `allow-all`
+            ViewerProtocolPolicy: redirect-to-https
+          ## The certificate to use when viewers use HTTPS to request objects.
+          ViewerCertificate:
+            CloudFrontDefaultCertificate: 'true'
+          ## Price Class 100 is USA, Mexico, Canada, EU and Israel (Cheapest)
+          PriceClass: PriceClass_100
+    KebabynDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties: 
+        TableName: Kebabyn-${self:custom.stage}
+        AttributeDefinitions: 
+          - 
+            AttributeName: "PrimaryKey"
+            AttributeType: "S"
+          - 
+            AttributeName: "SortKey"
+            AttributeType: "S"
+        KeySchema: 
+          - 
+            AttributeName: "PrimaryKey"
+            KeyType: "HASH"
+          - 
+            AttributeName: "SortKey"
+            KeyType: "RANGE"
+        ProvisionedThroughput: 
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+  ## In order to print out the hosted domain via `serverless info` we need to define the DomainName output for CloudFormation
+  Outputs:
+    WebAppCloudFrontDistributionOutput:
+      Value:
+        'Fn::GetAtt': [ WebAppCloudFrontDistribution, DomainName ]
