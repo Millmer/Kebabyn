@@ -94,8 +94,9 @@ resources:
                   - !Ref OriginAccessIdentity
           Enabled: 'true'
           ## Uncomment the following section in case you are using a custom domain
-          # Aliases:
-          # - mysite.example.com
+          Aliases:
+          - kebabyn.com
+          - www.kebabyn.com
           DefaultRootObject: index.html
           CustomErrorResponses:
             - ErrorCode: 404
@@ -116,11 +117,30 @@ resources:
             ViewerProtocolPolicy: redirect-to-https
           ## The certificate to use when viewers use HTTPS to request objects.
           ViewerCertificate:
-            CloudFrontDefaultCertificate: 'true'
+            AcmCertificateArn: arn:aws:acm:us-east-1:631452105797:certificate/a5250262-6135-4362-923f-e609f86e9f78
+            MinimumProtocolVersion: TLSv1.1_2016
+            SslSupportMethod: sni-only
           ## Price Class 100 is USA, Mexico, Canada, EU and Israel (Cheapest)
           PriceClass: PriceClass_100
+    DistributionRoute53Record:
+      Type: AWS::Route53::RecordSetGroup
+      DependsOn: WebAppCloudFrontDistribution
+      Properties: 
+        Comment: Created by Serverless Framework
+        HostedZoneId: Z0245881L0T0Y7VF0JVY
+        RecordSets: 
+          - Name: kebabyn.com
+            Type: A
+            AliasTarget:
+              HostedZoneId: Z2FDTNDATAQYW2
+              DNSName: !GetAtt WebAppCloudFrontDistribution.DomainName
+          - Name: www.kebabyn.com
+            Type: A
+            AliasTarget:
+              HostedZoneId: Z2FDTNDATAQYW2
+              DNSName: !GetAtt WebAppCloudFrontDistribution.DomainName
     KebabynDynamoDbTable:
-      Type: 'AWS::DynamoDB::Table'
+      Type: AWS::DynamoDB::Table
       Properties: 
         TableName: Kebabyn-${self:custom.stage}
         AttributeDefinitions: 
