@@ -160,6 +160,62 @@ resources:
         ProvisionedThroughput: 
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+    KebabynUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: kebabyn-user-pool-${self:custom.stage}
+        UsernameAttributes:
+          - email
+        AliasAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+        UsernameConfiguration: false
+    KebabynUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: kebabyn-user-pool-client-${self:custom.stage}
+        AllowedOAuthFlows:
+          - implicit
+        AllowedOAuthFlowsUserPoolClient: true
+        AllowedOAuthScopes:
+          - email
+          - openid
+          - profile
+          - aws.cognito.signin.user.admin
+        UserPoolId:
+          Ref: KebabynUserPool
+        CallbackURLs: 
+          - http://localhost:8000
+          - https://kebabyn.com
+        LogoutURLs:
+          - http://localhost:8000/auth/login
+          - https://kebabyn.com/auth/login
+        ExplicitAuthFlows:
+          - ALLOW_CUSTOM_AUTH
+          - ALLOW_USER_SRP_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        SupportedIdentityProviders: 
+          - COGNITO
+          - Google
+        GenerateSecret: false
+        PreventUserExistenceErrors: ENABLED
+        RefreshTokenValidity: 30 # days
+        AccessTokenValidity: 1 # hours
+        IdTokenValidity: 1 # hours
+    # KebabynUserPoolGoogleIdentityProvider:
+    #   Type: AWS::Cognito::UserPoolIdentityProvider
+    #   Properties: 
+    #     ProviderName: Google
+    #     AttributeMapping:
+    #       email: emailAddress
+    #     ProviderDetails:
+    #       client_id: <yourclientid>.apps.googleusercontent.com
+    #       client_secret: <yourclientsecret>
+    #       authorize_scopes: email openid
+    #     ProviderType: Google
+    #     UserPoolId: 
+    #       Ref: CognitoUserPool
 
   ## In order to print out the hosted domain via `serverless info` we need to define the DomainName output for CloudFormation
   Outputs:
