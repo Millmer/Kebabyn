@@ -8,6 +8,17 @@ provider:
   runtime: nodejs12.x
   region: eu-central-1
   stage: dev
+  httpApi:
+    cors: true
+    authorizers:
+      KebabynAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl:
+          Fn::Join:
+          - ''
+          - - 'https://cognito-idp.${self:provider.region}.amazonaws.com/'
+            - !Ref KebabynUserPool
+        audience: !Ref KebabynUserPoolClient
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -30,17 +41,17 @@ functions:
   registerKebab:
     handler: back/handler.registerKebab
     events:
-      - http:
-          path: kebabs/register
-          method: post
-          cors: true
+      - httpApi:
+          path: /kebabs/register
+          method: POST
+          authorizer: KebabynAuthorizer
   listKebabs:
     handler: back/handler.listKebabRegistrations
     events:
-      - http:
-          path: kebabs/list
-          method: get
-          cors: true
+      - httpApi:
+          path: /kebabs/list
+          method: GET
+          authorizer: KebabynAuthorizer
 
 resources:
   Resources:
