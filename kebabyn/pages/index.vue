@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex flex-col">
+  <div v-if="user" class="min-h-screen flex flex-col">
     <div
       class="m-auto flex justify-center items-center text-center"
     >
@@ -15,7 +15,7 @@
           </h1>
           <div>
             <h2 class="block font-light text-5xl tracking-wider mb-5">
-              Welcome to Kebabyn
+              Welcome {{ user ? user.name : '' }} to Kebabyn
             </h2>
             <button @click="() => this.tl.play()">
               <span class="label">Open 🎁</span>
@@ -181,15 +181,26 @@
       </div>
     </div>
     <div class="flex-shrink-0 m-1">
+      <button @click="signOut()" class="p-2 cursor-pointer text-xs float-left border border-white rounded-sm">
+        Log Out
+      </button>
       <p class="text-xs float-right">
         <sup>*</sup>Based on an average of 2 pittas a week,
         <i>ingen salat</i> of course 😉
       </p>
     </div>
   </div>
+  <div v-else>
+    <button @click="signIn()">
+      I'm going to need to see proof
+    </button>
+
+    <p class="text-sm mt-2">Are you worthy?</p>
+  </div>
 </template>
 
 <script>
+import { Auth } from 'aws-amplify'
 import lottie from 'vue-lottie/src/lottie.vue'
 import * as animationData from '~/assets/confetti.json'
 import { gsap, Power2, Elastic, CSSRulePlugin } from 'gsap/all'
@@ -203,9 +214,11 @@ export default {
       anim: null, // for saving the reference to the animation
       lottieOptions: { animationData: animationData.default, loop: true },
       tl: null,
+      user: null,
     }
   },
   mounted() {
+    this.getUser();
     this.$nextTick(() => {
       gsap.registerPlugin(CSSRulePlugin)
       const rule = CSSRulePlugin.getRule('button::before')
@@ -242,6 +255,25 @@ export default {
     handleAnimation(anim) {
       this.anim = anim
     },
+    async getUser() {
+      try {
+        const cognitoUser = await Auth.currentAuthenticatedUser();
+        this.user = cognitoUser.signInUserSession.idToken.payload;
+      } catch (error) {
+        if (error === 'The user is not authenticated') {
+          this.user = null;
+        } else {
+          console.error(error);
+        }
+      }
+    },
+    signIn() {
+      Auth.federatedSignIn({ provider: 'Google' });
+    },
+    signOut() {
+      Auth.signOut();
+      this.user = null;
+    }
   },
 }
 </script>
