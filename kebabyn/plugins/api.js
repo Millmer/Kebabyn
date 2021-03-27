@@ -6,6 +6,10 @@ class APIService {
     this.$toast = $toast
     this.API = API
     this.apiName = 'KebabynAPI'
+    this.Cache = Cache.createInstance({
+      keyPrefix: 'KebabynAPICache',
+      defaultTTL: 5 * 60 * 1000, // 5 minutes
+    })
   }
 
   _createAutoResolvePromise(value) {
@@ -14,12 +18,11 @@ class APIService {
 
   async get(...args) {
     const key = args[0]
-    let cached = Cache.getItem(key)
-    if (!cached) {
+    let value = this.Cache.getItem(key)
+    if (!value) {
       try {
-        cached = await this.API.get(this.apiName, ...args)
-        const fiveMinsFromNow = new Date().getTime() + 5 * 60 * 1000
-        Cache.setItem(key, cached, { expires: fiveMinsFromNow })
+        value = await this.API.get(this.apiName, ...args)
+        this.Cache.setItem(key, value)
       } catch (error) {
         this.$toast.error('Network Error', {
           action: {
@@ -33,7 +36,7 @@ class APIService {
         throw error
       }
     }
-    return this._createAutoResolvePromise(cached)
+    return this._createAutoResolvePromise(value)
   }
 
   async post(...args) {
