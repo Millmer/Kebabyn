@@ -255,9 +255,7 @@ export default {
     },
     async getKebabs() {
       try {
-        this.kebabs = await this.$http.get('/kebabs/list', {
-          queryStringParameters: { orderBy: 'price' },
-        })
+        this.kebabs = await this.$http.get('/kebabs/list')
       } catch (error) {
         this.kebabs = []
       }
