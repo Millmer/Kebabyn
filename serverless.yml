@@ -1,10 +1,24 @@
 service: kebabyn
 
+plugins:
+  - serverless-dotenv-plugin
+
 provider:
   name: aws
   runtime: nodejs12.x
   region: eu-central-1
   stage: dev
+  httpApi:
+    cors: true
+    authorizers:
+      KebabynAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl:
+          Fn::Join:
+          - ''
+          - - 'https://cognito-idp.${self:provider.region}.amazonaws.com/'
+            - !Ref KebabynUserPool
+        audience: !Ref KebabynUserPoolClient
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -13,10 +27,10 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource:
-        - arn:aws:dynamodb:${self:provider.region}:631452105797:table/Kebabyn-${self:custom.stage}
-        - arn:aws:dynamodb:${self:provider.region}:631452105797:table/Kebabyn-${self:custom.stage}/index/*
+        - arn:aws:dynamodb:${self:provider.region}:631452105797:table/kebabyn-${self:custom.stage}
+        - arn:aws:dynamodb:${self:provider.region}:631452105797:table/kebabyn-${self:custom.stage}/index/*
   environment:
-    DYNAMODB_TABLE_NAME: Kebabyn-${self:custom.stage}
+    DYNAMODB_TABLE_NAME: kebabyn-${self:custom.stage}
 
 custom:
   stage: "${opt:stage, self:provider.stage}"
@@ -27,17 +41,17 @@ functions:
   registerKebab:
     handler: back/handler.registerKebab
     events:
-      - http:
-          path: kebabs/register
-          method: post
-          cors: true
+      - httpApi:
+          path: /kebabs/register
+          method: POST
+          authorizer: KebabynAuthorizer
   listKebabs:
     handler: back/handler.listKebabRegistrations
     events:
-      - http:
-          path: kebabs/list
-          method: get
-          cors: true
+      - httpApi:
+          path: /kebabs/list
+          method: GET
+          authorizer: KebabynAuthorizer
 
 resources:
   Resources:
@@ -117,7 +131,7 @@ resources:
             ViewerProtocolPolicy: redirect-to-https
           ## The certificate to use when viewers use HTTPS to request objects.
           ViewerCertificate:
-            AcmCertificateArn: arn:aws:acm:us-east-1:631452105797:certificate/a5250262-6135-4362-923f-e609f86e9f78
+            AcmCertificateArn: ${env:CF_DIST_CERT_ARN}
             MinimumProtocolVersion: TLSv1.1_2016
             SslSupportMethod: sni-only
           ## Price Class 100 is USA, Mexico, Canada, EU and Israel (Cheapest)
@@ -127,7 +141,7 @@ resources:
       DependsOn: WebAppCloudFrontDistribution
       Properties: 
         Comment: Created by Serverless Framework
-        HostedZoneId: Z0245881L0T0Y7VF0JVY
+        HostedZoneId: ${env:HOSTED_ZONE_ID}
         RecordSets: 
           - Name: kebabyn.com
             Type: A
@@ -139,10 +153,10 @@ resources:
             AliasTarget:
               HostedZoneId: Z2FDTNDATAQYW2
               DNSName: !GetAtt WebAppCloudFrontDistribution.DomainName
-    KebabynDynamoDbTable:
+    KebabynDynamoDBTable:
       Type: AWS::DynamoDB::Table
       Properties: 
-        TableName: Kebabyn-${self:custom.stage}
+        TableName: kebabyn-${self:custom.stage}
         AttributeDefinitions: 
           - 
             AttributeName: "PrimaryKey"
@@ -160,6 +174,80 @@ resources:
         ProvisionedThroughput: 
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+    KebabynUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName: kebabyn-user-pool-${self:custom.stage}
+        UsernameAttributes:
+          - email
+        AutoVerifiedAttributes:
+          - email
+        UsernameConfiguration:
+          CaseSensitive: False
+    KebabynUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        ClientName: kebabyn-user-pool-client-${self:custom.stage}
+        AllowedOAuthFlows:
+          - code # Auth Code sent by provider to be exchanged
+          - implicit # Provides JWTs
+        AllowedOAuthFlowsUserPoolClient: true
+        AllowedOAuthScopes:
+          - email
+          - openid
+          - profile
+          - aws.cognito.signin.user.admin
+        UserPoolId: !Ref KebabynUserPool
+        CallbackURLs: 
+          - http://localhost:3000
+          - https://kebabyn.com
+        LogoutURLs:
+          - http://localhost:3000/auth/login
+          - https://kebabyn.com/auth/login
+        ExplicitAuthFlows:
+          - ALLOW_CUSTOM_AUTH
+          - ALLOW_USER_SRP_AUTH
+          - ALLOW_REFRESH_TOKEN_AUTH
+        SupportedIdentityProviders: 
+          - COGNITO
+          - Google
+        GenerateSecret: false
+        PreventUserExistenceErrors: ENABLED
+        RefreshTokenValidity: 30 # days
+        AccessTokenValidity: 1 # hours
+        IdTokenValidity: 1 # hours
+    KebabynUserPoolDomain:
+      Type: AWS::Cognito::UserPoolDomain
+      Properties: 
+        CustomDomainConfig: 
+          CertificateArn: ${env:CUP_DOMAIN_CERT_ARN}
+        Domain: auth.kebabyn.com
+        UserPoolId: !Ref KebabynUserPool
+    KebabynUserPoolDomainRoute53Record:
+      Type: AWS::Route53::RecordSet
+      DependsOn: KebabynUserPoolDomain
+      Properties: 
+        Name: auth.kebabyn.com
+        HostedZoneId: ${env:HOSTED_ZONE_ID}
+        Comment: Created by Serverless Framework
+        Type: A
+        AliasTarget:
+          HostedZoneId: Z2FDTNDATAQYW2
+          DNSName: d2436cmeobstmb.cloudfront.net
+    KebabynUserPoolGoogleIdentityProvider:
+      Type: AWS::Cognito::UserPoolIdentityProvider
+      Properties: 
+        ProviderName: Google
+        ProviderType: Google
+        AttributeMapping:
+          email: email
+          name: name
+          picture: picture
+        ProviderDetails:
+          client_id: ${env:GOOGLE_OAUTH_CLIENT_ID}
+          client_secret: ${env:GOOGLE_OAUTH_CLIENT_SECRET}
+          authorize_scopes: profile email openid
+        UserPoolId: !Ref KebabynUserPool
 
   ## In order to print out the hosted domain via `serverless info` we need to define the DomainName output for CloudFormation
   Outputs:
