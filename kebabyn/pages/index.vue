@@ -1,6 +1,15 @@
 <template>
-  <div v-if="user" class="min-h-screen flex flex-col">
-    <div class="m-auto flex justify-center items-center text-center">
+  <div class="min-h-screen flex flex-col">
+    <div v-if="!$auth.isAuthenticated">
+      <nuxt-link to="/auth/login">Login</nuxt-link>
+    </div>
+    <div v-else>
+      <p>You're logged in as {{ $auth.name }}</p>
+      <button @click="$store.dispatch('auth/logout')">Logout</button>
+      <button @click="getKebabs">Get Kebabs</button>
+      <div>{{ kebabs }}</div>
+    </div>
+    <!-- <div class="m-auto flex justify-center items-center text-center">
       <div>
         <lottie
           class="absolute top-0 left-0"
@@ -13,7 +22,7 @@
           </h1>
           <div>
             <h2 class="block font-light text-5xl tracking-wider mb-5">
-              Welcome {{ user ? user.name : '' }} to Kebabyn
+              Welcome to Kebabyn
             </h2>
             <button @click="() => tl.play()">
               <span class="label">Open 🎁</span>
@@ -189,20 +198,15 @@
         <sup>*</sup>Based on an average of 2 pittas a week,
         <i>ingen salat</i> of course 😉
       </p>
-    </div>
-  </div>
-  <div v-else>
-    <button @click="signIn()">I'm going to need to see proof</button>
-
-    <p class="text-sm mt-2">Are you worthy?</p>
+    </div> -->
   </div>
 </template>
 
 <script>
-import { Auth } from 'aws-amplify'
 import lottie from 'vue-lottie/src/lottie.vue'
-import { gsap, Power2, Elastic, CSSRulePlugin } from 'gsap/all'
+// import { gsap, Power2, Elastic, CSSRulePlugin } from 'gsap/all'
 import * as animationData from '~/assets/confetti.json'
+import { API } from 'aws-amplify';
 
 export default {
   components: {
@@ -213,71 +217,62 @@ export default {
       anim: null, // for saving the reference to the animation
       lottieOptions: { animationData: animationData.default, loop: true },
       tl: null,
-      user: null,
+      kebabs: []
     }
   },
   mounted() {
-    this.getUser()
-    this.$nextTick(() => {
-      gsap.registerPlugin(CSSRulePlugin)
-      const rule = CSSRulePlugin.getRule('button::before')
+    // this.$nextTick(() => {
+    //   gsap.registerPlugin(CSSRulePlugin)
+    //   const rule = CSSRulePlugin.getRule('button::before')
 
-      const tl = gsap.timeline({ defaults: { ease: Power2.easeOut } })
-      tl.to('.label', {
-        opacity: 0,
-        height: 0,
-        position: 'absolute',
-        duration: '.2s',
-      })
-        .to(
-          'button',
-          {
-            borderRadius: '50%',
-            width: '6em',
-            height: '6em',
-            ease: Elastic.easeOut.config(0.7, 0.3),
-            duration: 1.2,
-          },
-          '-=.7s'
-        )
-        .to(rule, { borderRadius: '50%' }, '-=1s')
-        .to('svg', { display: 'block' }, '-=1')
-        .to('svg', { strokeDasharray: '90 103', duration: 1 }, '-=0.25')
-        .to('p', { clipPath: 'circle(100% at 50% 50%)', duration: 1.2 })
+    //   const tl = gsap.timeline({ defaults: { ease: Power2.easeOut } })
+    //   tl.to('.label', {
+    //     opacity: 0,
+    //     height: 0,
+    //     position: 'absolute',
+    //     duration: '.2s',
+    //   })
+    //     .to(
+    //       'button',
+    //       {
+    //         borderRadius: '50%',
+    //         width: '6em',
+    //         height: '6em',
+    //         ease: Elastic.easeOut.config(0.7, 0.3),
+    //         duration: 1.2,
+    //       },
+    //       '-=.7s'
+    //     )
+    //     .to(rule, { borderRadius: '50%' }, '-=1s')
+    //     .to('svg', { display: 'block' }, '-=1')
+    //     .to('svg', { strokeDasharray: '90 103', duration: 1 }, '-=0.25')
+    //     .to('p', { clipPath: 'circle(100% at 50% 50%)', duration: 1.2 })
 
-      tl.pause()
+    //   tl.pause()
 
-      this.tl = tl
-    })
+    //   this.tl = tl
+    // })
   },
   methods: {
     handleAnimation(anim) {
       this.anim = anim
     },
-    async getUser() {
+    async getKebabs() { 
+      const apiName = 'KebabynAPI';
+      const path = '/kebabs/list';
+
       try {
-        const cognitoUser = await Auth.currentAuthenticatedUser()
-        this.user = cognitoUser.signInUserSession.idToken.payload
+        this.kebabs = await this.$http.get(apiName, path);
       } catch (error) {
-        if (error === 'The user is not authenticated') {
-          this.user = null
-        } else {
-          // console.error(error)
-        }
+        this.kebabs = [];
+        console.error(error);
       }
-    },
-    signIn() {
-      Auth.federatedSignIn({ provider: 'Google' })
-    },
-    signOut() {
-      Auth.signOut()
-      this.user = null
-    },
+    }
   },
 }
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 button {
   background: none;
   border: none;
@@ -308,12 +303,6 @@ button {
   &:focus {
     outline: none;
   }
-}
-
-p {
-  text-align: center;
-  font-weight: bold;
-  clip-path: circle(0% at 50% 50%);
 }
 
 svg {
