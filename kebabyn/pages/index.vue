@@ -254,11 +254,10 @@ export default {
       this.anim = anim
     },
     async getKebabs() {
-      const apiName = 'KebabynAPI'
-      const path = '/kebabs/list'
-
       try {
-        this.kebabs = await this.$http.get(apiName, path)
+        this.kebabs = await this.$http.get('/kebabs/list', {
+          queryStringParameters: { orderBy: 'price' },
+        })
       } catch (error) {
         this.kebabs = []
       }
@@ -267,7 +266,7 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 button {
   background: none;
   border: none;

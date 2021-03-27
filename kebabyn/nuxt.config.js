@@ -69,6 +69,10 @@ export default {
       src: '~/plugins/auth',
       mode: 'client',
     },
+    {
+      src: '~/plugins/api',
+      mode: 'client',
+    },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -85,10 +89,19 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
+    '@nuxtjs/toast',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {},
+
+  // Toast module configuration: https://www.npmjs.com/package/@nuxtjs/toast
+  toast: {
+    position: 'bottom-left',
+    type: 'outline',
+    duration: 1500,
+    keepOnHover: true,
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {},
