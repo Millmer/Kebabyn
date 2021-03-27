@@ -7,8 +7,9 @@ export default {
       domain: 'auth.kebabyn.com',
       scope: ['profile', 'email', 'openid'],
       redirectSignIn: 'http://localhost:3000,https://kebabyn.com',
-      redirectSignOut: 'http://localhost:3000/auth/login,https://kebabyn.com/auth/login',
+      redirectSignOut:
+        'http://localhost:3000/auth/login,https://kebabyn.com/auth/login',
       responseType: 'token',
     },
-  }
+  },
 }

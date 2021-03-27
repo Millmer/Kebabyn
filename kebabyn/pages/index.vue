@@ -203,28 +203,26 @@
 </template>
 
 <script>
-import lottie from 'vue-lottie/src/lottie.vue'
+// import lottie from 'vue-lottie/src/lottie.vue'
 // import { gsap, Power2, Elastic, CSSRulePlugin } from 'gsap/all'
 import * as animationData from '~/assets/confetti.json'
-import { API } from 'aws-amplify';
 
 export default {
   components: {
-    lottie,
+    // lottie,
   },
   data() {
     return {
       anim: null, // for saving the reference to the animation
       lottieOptions: { animationData: animationData.default, loop: true },
       tl: null,
-      kebabs: []
+      kebabs: [],
     }
   },
   mounted() {
     // this.$nextTick(() => {
     //   gsap.registerPlugin(CSSRulePlugin)
     //   const rule = CSSRulePlugin.getRule('button::before')
-
     //   const tl = gsap.timeline({ defaults: { ease: Power2.easeOut } })
     //   tl.to('.label', {
     //     opacity: 0,
@@ -247,9 +245,7 @@ export default {
     //     .to('svg', { display: 'block' }, '-=1')
     //     .to('svg', { strokeDasharray: '90 103', duration: 1 }, '-=0.25')
     //     .to('p', { clipPath: 'circle(100% at 50% 50%)', duration: 1.2 })
-
     //   tl.pause()
-
     //   this.tl = tl
     // })
   },
@@ -257,17 +253,16 @@ export default {
     handleAnimation(anim) {
       this.anim = anim
     },
-    async getKebabs() { 
-      const apiName = 'KebabynAPI';
-      const path = '/kebabs/list';
+    async getKebabs() {
+      const apiName = 'KebabynAPI'
+      const path = '/kebabs/list'
 
       try {
-        this.kebabs = await this.$http.get(apiName, path);
+        this.kebabs = await this.$http.get(apiName, path)
       } catch (error) {
-        this.kebabs = [];
-        console.error(error);
+        this.kebabs = []
       }
-    }
+    },
   },
 }
 </script>

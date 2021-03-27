@@ -1,34 +1,34 @@
-import { Auth } from 'aws-amplify';
+import { Auth } from 'aws-amplify'
 
 export const state = () => ({
   isAuthenticated: false,
-  user: null
-});
+  user: null,
+})
 
 export const mutations = {
   set(state, user) {
-    state.isAuthenticated = !!user;
-    state.user = user;
-  }
+    state.isAuthenticated = !!user
+    state.user = user
+  },
 }
 
 export const actions = {
   async load({ commit }) {
     try {
-      const user = await Auth.currentAuthenticatedUser();
-      commit('set', user);
-      return user;
+      const user = await Auth.currentAuthenticatedUser()
+      commit('set', user)
+      return user
     } catch (error) {
-      commit('set', null);
+      commit('set', null)
     }
   },
 
-  async login() {
+  login() {
     Auth.federatedSignIn({ provider: 'Google' })
   },
 
   async logout({ commit }) {
-    await Auth.signOut();
-    commit('set', null);
-  }
+    await Auth.signOut()
+    commit('set', null)
+  },
 }

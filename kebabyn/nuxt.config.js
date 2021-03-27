@@ -56,7 +56,7 @@ export default {
   css: [],
 
   router: {
-    middleware: 'auth'
+    middleware: 'auth',
   },
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -67,8 +67,8 @@ export default {
     },
     {
       src: '~/plugins/auth',
-      mode: 'client'
-    }
+      mode: 'client',
+    },
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
