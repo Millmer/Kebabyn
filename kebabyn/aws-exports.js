@@ -9,9 +9,9 @@ export default {
         scope: ['profile', 'email', 'openid'],
         redirectSignIn: 'http://localhost:3000/',
         redirectSignOut: 'http://localhost:3000/auth/login/',
-        responseType: 'token'
-      }
-    }
+        responseType: 'token',
+      },
+    },
   },
   production: {
     Auth: {
@@ -23,8 +23,8 @@ export default {
         scope: ['profile', 'email', 'openid'],
         redirectSignIn: 'https://kebabyn.com/',
         redirectSignOut: 'https://kebabyn.com/auth/login/',
-        responseType: 'token'
-      }
-    }
-  }
-};
+        responseType: 'token',
+      },
+    },
+  },
+}

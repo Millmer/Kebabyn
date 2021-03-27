@@ -1,15 +1,13 @@
 <template>
   <div v-if="user" class="min-h-screen flex flex-col">
-    <div
-      class="m-auto flex justify-center items-center text-center"
-    >
+    <div class="m-auto flex justify-center items-center text-center">
       <div>
         <lottie
           class="absolute top-0 left-0"
           :options="lottieOptions"
           @animCreated="handleAnimation"
         />
-        <div class="flex flex-col space-y-28  mb-10">
+        <div class="flex flex-col space-y-28 mb-10">
           <h1 class="block font-light text-5xl sm:text-8xl tracking-widest">
             <span ref="birthday" class="birthday">Happy Birthday! 🎉</span>
           </h1>
@@ -17,7 +15,7 @@
             <h2 class="block font-light text-5xl tracking-wider mb-5">
               Welcome {{ user ? user.name : '' }} to Kebabyn
             </h2>
-            <button @click="() => this.tl.play()">
+            <button @click="() => tl.play()">
               <span class="label">Open 🎁</span>
               <svg
                 class="kebab"
@@ -170,18 +168,21 @@
         </div>
         <div class="flex flex-col space-y-2">
           <div class="flex flex-col space-y-3">
-            <p class="text-lg">
-              You have a years supply of kebabs<sup>*</sup>
-            </p>
+            <p class="text-lg">You have a years supply of kebabs<sup>*</sup></p>
 
             <p class="text-base">Come back soon to register your first!</p>
-            <p class="text-sm">Bring proof of who you are, I'll be checking 🧐</p>
+            <p class="text-sm">
+              Bring proof of who you are, I'll be checking 🧐
+            </p>
           </div>
         </div>
       </div>
     </div>
     <div class="flex-shrink-0 m-1">
-      <button @click="signOut()" class="p-2 cursor-pointer text-xs float-left border border-white rounded-sm">
+      <button
+        class="p-2 cursor-pointer text-xs float-left border border-white rounded-sm"
+        @click="signOut()"
+      >
         Log Out
       </button>
       <p class="text-xs float-right">
@@ -191,9 +192,7 @@
     </div>
   </div>
   <div v-else>
-    <button @click="signIn()">
-      I'm going to need to see proof
-    </button>
+    <button @click="signIn()">I'm going to need to see proof</button>
 
     <p class="text-sm mt-2">Are you worthy?</p>
   </div>
@@ -202,8 +201,8 @@
 <script>
 import { Auth } from 'aws-amplify'
 import lottie from 'vue-lottie/src/lottie.vue'
-import * as animationData from '~/assets/confetti.json'
 import { gsap, Power2, Elastic, CSSRulePlugin } from 'gsap/all'
+import * as animationData from '~/assets/confetti.json'
 
 export default {
   components: {
@@ -218,7 +217,7 @@ export default {
     }
   },
   mounted() {
-    this.getUser();
+    this.getUser()
     this.$nextTick(() => {
       gsap.registerPlugin(CSSRulePlugin)
       const rule = CSSRulePlugin.getRule('button::before')
@@ -257,23 +256,23 @@ export default {
     },
     async getUser() {
       try {
-        const cognitoUser = await Auth.currentAuthenticatedUser();
-        this.user = cognitoUser.signInUserSession.idToken.payload;
+        const cognitoUser = await Auth.currentAuthenticatedUser()
+        this.user = cognitoUser.signInUserSession.idToken.payload
       } catch (error) {
         if (error === 'The user is not authenticated') {
-          this.user = null;
+          this.user = null
         } else {
-          console.error(error);
+          // console.error(error)
         }
       }
     },
     signIn() {
-      Auth.federatedSignIn({ provider: 'Google' });
+      Auth.federatedSignIn({ provider: 'Google' })
     },
     signOut() {
-      Auth.signOut();
-      this.user = null;
-    }
+      Auth.signOut()
+      this.user = null
+    },
   },
 }
 </script>
