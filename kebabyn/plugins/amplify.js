@@ -1,5 +1,4 @@
-import Vue from 'vue'
-import Amplify, { Auth, API } from 'aws-amplify'
+import Amplify, { Auth } from 'aws-amplify'
 import awsConfig from '../aws-exports'
 
 const isLocalhost = Boolean(
@@ -55,5 +54,3 @@ const updatedAwsConfig = {
 }
 
 Amplify.configure(updatedAwsConfig)
-Vue.prototype.$http = API
-Vue.$http = API

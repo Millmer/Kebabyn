@@ -254,11 +254,8 @@ export default {
       this.anim = anim
     },
     async getKebabs() {
-      const apiName = 'KebabynAPI'
-      const path = '/kebabs/list'
-
       try {
-        this.kebabs = await this.$http.get(apiName, path)
+        this.kebabs = await this.$http.get('/kebabs/list')
       } catch (error) {
         this.kebabs = []
       }
