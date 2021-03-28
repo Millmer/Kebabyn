@@ -265,38 +265,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-button {
-  background: none;
-  border: none;
-  color: white;
-  position: relative;
-  padding: 0.5em 1em;
-  font-weight: bold;
-  font-size: 2em;
-  text-align: center;
-  border: 2px solid white;
-  cursor: pointer;
-  border-radius: 0.2em;
-  outline: none;
-  width: 10em;
-
-  &:before {
-    position: absolute;
-    content: '';
-    background: #5000bb;
-    height: 100%;
-    width: 100%;
-    top: 0.5em;
-    left: 0.5em;
-    z-index: -1;
-    border-radius: 0.2em;
-  }
-
-  &:focus {
-    outline: none;
-  }
-}
-
 svg {
   display: none;
   stroke-dasharray: 0 103;

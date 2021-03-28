@@ -1,16 +1,10 @@
 <template>
-  <div class="max-w-md mx-auth pt-6">
-    <div class="flex min-h-screen justify-center items-center">
-      <h1 class="text-xl mb-3">Login</h1>
-      <div v-if="!$auth.isAuthenticated" class="flex flex-col">
-        <button class="button" @click="$store.dispatch('auth/login')">
-          Login
-        </button>
-      </div>
-      <div v-else class="flex flex-col">
-        You're logged in as {{ $auth.email }}
-        <button @click="$store.dispatch('auth/logout')">Logout</button>
-      </div>
-    </div>
+  <div class="w-full flex flex-col space-y-20 justify-center items-center">
+    <h1 class="text-4xl">Welcome to Kebabyn</h1>
+    <Button
+      v-if="!$auth.isAuthenticated"
+      :on-click="() => $store.dispatch('auth/login')"
+      >Login</Button
+    >
   </div>
 </template>
