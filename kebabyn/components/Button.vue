@@ -70,7 +70,7 @@ export default {
 <style lang="scss" scoped>
 button {
   &:enabled:hover {
-    background: #5000bb;
+    @apply bg-kebabyn-secondary;
     border: none;
     outline: 4px solid white;
     outline-offset: -4px;
@@ -78,9 +78,9 @@ button {
   }
 
   &:enabled:not(:hover):before {
+    @apply bg-kebabyn-secondary;
     position: absolute;
     content: '';
-    background: #5000bb;
     height: 100%;
     width: 100%;
     top: 0.5em;

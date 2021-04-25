@@ -1,17 +1,7 @@
 <template>
-  <div>
+  <div
+    class="min-h-screen py-6 flex flex-col justify-center sm:py-12 bg-kebabyn-primary text-white font-sans"
+  >
     <Nuxt />
   </div>
 </template>
-
-<style>
-body {
-  background: #5d00d6;
-  margin: 0;
-  display: grid;
-  place-items: center;
-  color: white;
-  font-family: 'Poppins', sans-serif;
-  height: 100vh;
-}
-</style>
