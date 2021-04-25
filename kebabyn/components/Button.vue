@@ -1,6 +1,7 @@
 <template>
   <button :class="actionClass" :disabled="disabled" @click="onClick">
-    <slot />
+    <Kebab v-if="loading" class="animate-spin h-8 w-8 mr-3 inline-block align-middle" />
+    <slot class="inline-block align-middle" />
   </button>
 </template>
 
@@ -53,8 +54,8 @@ export default {
       ]
       const sizeClassNames = {
         sm: ['py-1', 'px-2', 'text-lg'],
-        md: ['py-2', 'px-4', 'w-40', 'text-2xl'],
-        lg: ['py-4', 'px-8', 'w-80', 'text-3xl'],
+        md: ['py-2', 'px-4', 'w-60', 'text-2xl'],
+        lg: ['py-4', 'px-8', 'w-100', 'text-3xl'],
       }
       classNames = [...classNames, ...sizeClassNames[this.size]]
       if (this.full) classNames.push('w-full')
@@ -70,7 +71,7 @@ export default {
 <style lang="scss" scoped>
 button {
   &:enabled:hover {
-    background: #5000bb;
+    @apply bg-kebabyn-secondary;
     border: none;
     outline: 4px solid white;
     outline-offset: -4px;
@@ -78,9 +79,9 @@ button {
   }
 
   &:enabled:not(:hover):before {
+    @apply bg-kebabyn-secondary;
     position: absolute;
     content: '';
-    background: #5000bb;
     height: 100%;
     width: 100%;
     top: 0.5em;

@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 module.exports = {
   purge: [
     './components/**/*.{vue,js}',
@@ -8,7 +10,15 @@ module.exports = {
   ],
   darkMode: false, // or 'media' or 'class'
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'kebabyn-primary': '#5d00d6',
+        'kebabyn-secondary': '#5000bb',
+      },
+      fontFamily: {
+        sans: ['Poppins', ...defaultTheme.fontFamily.sans],
+      },
+    },
   },
   variants: {
     extend: {

@@ -18,6 +18,21 @@ class AuthService {
     return this.user.signInUserSession.idToken.payload.name
   }
 
+  get firstName() {
+    if (!this.user) return
+    return this.name.split(' ')[0]
+  }
+
+  get initials() {
+    if (!this.user) return
+    return this.name
+      .match(/(^\S\S?|\b\S)?/g)
+      .join('')
+      .match(/(^\S|\S$)?/g)
+      .join('')
+      .toUpperCase()
+  }
+
   get email() {
     if (!this.user) return
     return this.user.signInUserSession.idToken.payload.email
@@ -25,7 +40,10 @@ class AuthService {
 
   get picture() {
     if (!this.user) return
-    return this.user.signInUserSession.idToken.payload.picture
+    return (
+      this.user.signInUserSession.idToken.payload.picture ||
+      `https://eu.ui-avatars.com/api/?background=random&name=${this.initials}`
+    )
   }
 }
 
