@@ -1,6 +1,7 @@
 <template>
   <button :class="actionClass" :disabled="disabled" @click="onClick">
-    <slot />
+    <Kebab v-if="loading" class="animate-spin h-8 w-8 mr-3 inline-block align-middle" />
+    <slot class="inline-block align-middle" />
   </button>
 </template>
 
@@ -53,8 +54,8 @@ export default {
       ]
       const sizeClassNames = {
         sm: ['py-1', 'px-2', 'text-lg'],
-        md: ['py-2', 'px-4', 'w-40', 'text-2xl'],
-        lg: ['py-4', 'px-8', 'w-80', 'text-3xl'],
+        md: ['py-2', 'px-4', 'w-60', 'text-2xl'],
+        lg: ['py-4', 'px-8', 'w-100', 'text-3xl'],
       }
       classNames = [...classNames, ...sizeClassNames[this.size]]
       if (this.full) classNames.push('w-full')
