@@ -1,126 +1,126 @@
 <template>
-  <div class="min-h-screen flex flex-col">
-    <div v-if="!$auth.isAuthenticated">
-      <nuxt-link to="/auth/login">Login</nuxt-link>
-    </div>
-    <div v-else>
-      <p>You're logged in as {{ $auth.name }}</p>
-      <button @click="$store.dispatch('auth/logout')">Logout</button>
-      <button @click="getKebabs">Get Kebabs</button>
-      <div>{{ kebabs }}</div>
-    </div>
-    <!-- <div class="m-auto flex justify-center items-center text-center">
-      <div>
-        <lottie
-          class="absolute top-0 left-0"
-          :options="lottieOptions"
-          @animCreated="handleAnimation"
-        />
-        <div class="flex flex-col space-y-28 mb-10">
-          <h1 class="block font-light text-5xl sm:text-8xl tracking-widest">
-            <span ref="birthday" class="birthday">Happy Birthday! 🎉</span>
-          </h1>
-          <div>
-            <h2 class="block font-light text-5xl tracking-wider mb-5">
-              Welcome to Kebabyn
-            </h2>
-            <button @click="() => tl.play()">
-              <span class="label">Open 🎁</span>
-            </button>
-          </div>
-        </div>
-        <div class="flex flex-col space-y-2">
-          <div class="flex flex-col space-y-3">
-            <p class="text-lg">You have a years supply of kebabs<sup>*</sup></p>
+  <section class="py-10 sm:py-16 lg:py-24">
+    <div class="px-4 mx-auto sm:px-6 lg:px-8 max-w-7xl">
+      <div class="text-center">
+        <h2 class="text-3xl font-bold leading-tight sm:text-4xl lg:text-5xl">
+          Welcome back {{ $auth.firstName }}!
+        </h2>
+        <p class="mt-4 text-2xl font-medium">
+          {{ numberOfKebabs }} kebabs added to date
+        </p>
 
-            <p class="text-base">Come back soon to register your first!</p>
-            <p class="text-sm">
-              Bring proof of who you are, I'll be checking 🧐
-            </p>
-          </div>
+        <div class="space-y-8">
+          <transition
+            enter-active-class="transition ease-in-out duration-300"
+            enter-class="transform opacity-0 scale-50"
+            enter-to-class="transform opacity-100 scale-100"
+            leave-active-class="transition ease-in-out duration-300"
+            leave-class="transform opacity-100 scale-100"
+            leave-to-class="transform opacity-0 scale-50"
+          >
+            <div
+              v-if="!showAddKebab"
+              class="
+                flex flex-col
+                items-center
+                justify-center
+                px-16
+                space-y-4
+                sm:space-y-0 sm:space-x-4 sm:flex-row
+                lg:mt-12
+                sm:px-0
+              "
+            >
+              <Button size="md" :onClick="() => (showAddKebab = true)"
+                >Add Kebab</Button
+              >
+              <Button size="md" :onClick="getKebabs">See History</Button>
+            </div>
+          </transition>
+
+          <transition
+            enter-active-class="transition ease-in-out duration-300"
+            enter-class="transform opacity-0 scale-50"
+            enter-to-class="transform opacity-100 scale-100"
+            leave-active-class="transition ease-in-out duration-300"
+            leave-class="transform opacity-100 scale-100"
+            leave-to-class="transform opacity-0 scale-50"
+          >
+            <div v-if="showAddKebab" class="mt-5 md:col-span-2 md:mt-0">
+              <div class="px-4 py-5 sm:p-6 w-1/2 m-auto">
+                <p class="text-base">
+                  You have 2 years supply of kebabs from Feb 2023 until Feb 2025
+                </p>
+                <p class="text-base mb-4">
+                  Choose a date and input how many kebabs you had<sup>*</sup>
+                </p>
+                <div class="flex flex-col items-center justify-evenly space-y-10 mb-8 lg:items-start md:space-y-0 md:space-x-10 md:flex-row md:mb-6">
+                  <CounterInput
+                    name="Kebab Count"
+                    :min="1"
+                    :max="2"
+                    v-model="registerKebabForm.amount"
+                  />
+                  <DatePicker
+                    @input="dateChosen"
+                    minDate="2023-02-01"
+                    maxDate="2024-01-31"
+                  />
+                </div>
+                <div
+                  class="
+                    flex flex-col
+                    items-center
+                    justify-center
+                    px-16
+                    space-y-4
+                    sm:space-y-0 sm:space-x-4 sm:flex-row
+                    lg:mt-12
+                    sm:px-0
+                  "
+                >
+                  <Button size="md" full :onClick="registerKebab">Add</Button>
+                  <Button size="md" :onClick="() => (showAddKebab = false)"
+                    >Back</Button
+                  >
+                </div>
+              </div>
+              <p class="text-xs absolute bottom-2 right-6">
+                <sup>*</sup>Based on an average of 2 pittas a week,
+                <i>ingen salat</i> of course 😉
+              </p>
+            </div>
+          </transition>
         </div>
       </div>
     </div>
-    <div class="flex-shrink-0 m-1">
-      <button
-        class="p-2 cursor-pointer text-xs float-left border border-white rounded-sm"
-        @click="signOut()"
-      >
-        Log Out
-      </button>
-      <p class="text-xs float-right">
-        <sup>*</sup>Based on an average of 2 pittas a week,
-        <i>ingen salat</i> of course 😉
-      </p>
-    </div> -->
-  </div>
+  </section>
 </template>
 
 <script>
-// import lottie from 'vue-lottie/src/lottie.vue'
-// import { gsap, Power2, Elastic, CSSRulePlugin } from 'gsap/all'
-import * as animationData from '~/assets/confetti.json'
-
 export default {
-  components: {
-    // lottie,
-  },
+  layout: 'authenticated',
   data() {
     return {
-      anim: null, // for saving the reference to the animation
-      lottieOptions: { animationData: animationData.default, loop: true },
-      tl: null,
+      showAddKebab: false,
+      numberOfKebabs: 20,
       kebabs: [],
+      registerKebabForm: {
+        amount: 1,
+      },
+      chosenDate: '',
     }
   },
-  mounted() {
-    // this.$nextTick(() => {
-    //   gsap.registerPlugin(CSSRulePlugin)
-    //   const rule = CSSRulePlugin.getRule('button::before')
-    //   const tl = gsap.timeline({ defaults: { ease: Power2.easeOut } })
-    //   tl.to('.label', {
-    //     opacity: 0,
-    //     height: 0,
-    //     position: 'absolute',
-    //     duration: '.2s',
-    //   })
-    //     .to(
-    //       'button',
-    //       {
-    //         borderRadius: '50%',
-    //         width: '6em',
-    //         height: '6em',
-    //         ease: Elastic.easeOut.config(0.7, 0.3),
-    //         duration: 1.2,
-    //       },
-    //       '-=.7s'
-    //     )
-    //     .to(rule, { borderRadius: '50%' }, '-=1s')
-    //     .to('svg', { display: 'block' }, '-=1')
-    //     .to('svg', { strokeDasharray: '90 103', duration: 1 }, '-=0.25')
-    //     .to('p', { clipPath: 'circle(100% at 50% 50%)', duration: 1.2 })
-    //   tl.pause()
-    //   this.tl = tl
-    // })
-  },
   methods: {
-    handleAnimation(anim) {
-      this.anim = anim
+    dateChosen(value) {
+      this.chosenDate = value
     },
-    async getKebabs() {
-      try {
-        this.kebabs = await this.$http.get('/kebabs/list')
-      } catch (error) {
-        this.kebabs = []
-      }
+    registerKebab() {
+      this.numberOfKebabs++
+    },
+    getKebabs() {
+      this.$router.push({ path: '/history' })
     },
   },
 }
 </script>
-
-<style scoped lang="scss">
-svg {
-  display: none;
-  stroke-dasharray: 0 103;
-}
-</style>

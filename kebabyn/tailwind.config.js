@@ -14,6 +14,7 @@ module.exports = {
       colors: {
         'kebabyn-primary': '#5d00d6',
         'kebabyn-secondary': '#5000bb',
+        'kebabyn-accent': '#EDE932',
       },
       fontFamily: {
         sans: ['Poppins', ...defaultTheme.fontFamily.sans],
@@ -26,5 +27,7 @@ module.exports = {
       cursor: ['disabled'],
     },
   },
-  plugins: [],
+  plugins: [
+    require('@tailwindcss/forms'),
+  ],
 }

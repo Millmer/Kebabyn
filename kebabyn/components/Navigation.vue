@@ -23,21 +23,23 @@
                 aria-expanded="false"
                 aria-haspopup="true"
                 @click="show = !show"
+                @blur="show = false"
               >
                 <span class="sr-only">Open user menu</span>
                 <img
-                  class="h-8 w-8 rounded-full"
+                  class="w-12 rounded-full"
                   :src="$auth.picture"
+                  referrerpolicy="no-referrer"
                   alt="User Profile Image"
                 />
               </button>
             </div>
 
             <transition
-              enter-active-class="transition ease-out duration-100"
+              enter-active-class="transition ease-out duration-500"
               enter-class="transition opacity-0 scale-95"
               enter-to-class="transform opacity-100 scale-100"
-              leave-active-class="transition ease-in duration-75"
+              leave-active-class="transition ease-in duration-300"
               leave-class="transform opacity-100 scale-100"
               leave-to-class="transform opacity-0 scale-95"
             >
@@ -80,8 +82,8 @@ export default {
           href: '/',
         },
         {
-          title: 'Settings',
-          href: '#',
+          title: 'History',
+          href: 'history',
         },
         {
           title: 'Log out',
