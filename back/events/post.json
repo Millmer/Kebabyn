@@ -1,0 +1,71 @@
+{
+  "version": "2.0",
+  "routeKey": "POST /kebabs/claim",
+  "rawPath": "/kebabs/claim",
+  "rawQueryString": "",
+  "headers": {
+    "accept": "application/json, text/plain, */*",
+    "accept-encoding": "gzip, deflate, br",
+    "accept-language": "en-GB,en-US;q=0.9,en;q=0.8,fr;q=0.7",
+    "authorization": "Bearer eyJraWQiOiJHS1lhTkhyOW1NQ25BdUV1UVZuWFBZWm5VQ0V0MEFOMmtBTmZONndKOE9nPSIsImFsZyI6IlJTMjU2In0.eyJhdF9oYXNoIjoiYWVSYmtDU3F6ckYzNlZwaXhGZVozdyIsInN1YiI6IjMyNWIzMTY4LTNiZDQtNDIzNi1iODVlLTFmNmFiNDQyMmExYiIsImNvZ25pdG86Z3JvdXBzIjpbImV1LWNlbnRyYWwtMV9NRFJVNlk2RFdfR29vZ2xlIl0sImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiaXNzIjoiaHR0cHM6XC9cL2NvZ25pdG8taWRwLmV1LWNlbnRyYWwtMS5hbWF6b25hd3MuY29tXC9ldS1jZW50cmFsLTFfTURSVTZZNkRXIiwiY29nbml0bzp1c2VybmFtZSI6Imdvb2dsZV8xMDA2NDIxMDY3MjIwMjgzNTgyNjAiLCJub25jZSI6IkRwRW5DYU5jZHNIaVRuYmlkd1dCQXhfRFllSTVPbWlZWnljVzVTeWxpcEU1WG1YdmtHaVhNbU5jdjAxNFVYX1Z3NmdEUll1OVNMSGNJZGdJbDctUHU2MzNvRC13V1h0MnJQYVJ2c2ZIVHY3Zkt1alVnN3B3T0c3X1o2MzhacmlqbTlLa2FoY080SWpJeUlCQ2g2N0RzM2k1ZjF2N1owUVBYUDQ5SWhQRGV1QSIsInBpY3R1cmUiOiJodHRwczpcL1wvbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbVwvYVwvQUVkRlRwNHVubVBFekJGdDBJVGlwUnhqdzh2S3pmclNjNUlxT0VYN2F1RDA9czk2LWMiLCJhdWQiOiI3Y2g5YTNtNWk2b2k2a2dzaTltYjQ2bG1nOCIsImlkZW50aXRpZXMiOlt7InVzZXJJZCI6IjEwMDY0MjEwNjcyMjAyODM1ODI2MCIsInByb3ZpZGVyTmFtZSI6Ikdvb2dsZSIsInByb3ZpZGVyVHlwZSI6Ikdvb2dsZSIsImlzc3VlciI6bnVsbCwicHJpbWFyeSI6InRydWUiLCJkYXRlQ3JlYXRlZCI6IjE2MTYyODQ1ODM5ODMifV0sInRva2VuX3VzZSI6ImlkIiwiYXV0aF90aW1lIjoxNjc2ODQ3NDg3LCJuYW1lIjoiSmFtZXMgTWlsbGVyIiwiZXhwIjoxNjc2ODUxMDg3LCJpYXQiOjE2NzY4NDc0ODcsImVtYWlsIjoiamFtZXMubWlsbGVyQGRldmVsb3B5bi5jb20ifQ.nPVNoSHYHsp1M7ORzohtCbI-Zq2EiI0jPf_O4lJV9jVacObqmu2Ra42w6zbdnNb1lIT_XACd5KblGL8XMrQEICyvdfqhQuqTylnMaBNVeCaL05Kb37htlTbBsn_23luLvIeHEKlVpYUCGYyjhGTgSEKCPNzpNYreTpFhgwEDaC4oK_tR4uX3qbsoQx4WmgT_zfXI5W4IKXJmEGGcJlhagdWbdiLOk2t0hny17HzVxk1vfUHwYRj8MAzlV0UT-_t8shrnWQz4QmvVAEsLDcL9_Akcp1OtZXKI9kutjN9FoKlEbt5cfO1C5PHUtizaBHJu7uz8sL4vxrGm4u_2lm5ixQ",
+    "content-length": "43",
+    "content-type": "application/json; charset=UTF-8",
+    "host": "g8k7yxd5xf.execute-api.eu-central-1.amazonaws.com",
+    "origin": "http://localhost:3000",
+    "referer": "http://localhost:3000/",
+    "sec-ch-ua": "\"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"108\", \"Google Chrome\";v=\"108\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"macOS\"",
+    "sec-fetch-dest": "empty",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "cross-site",
+    "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
+    "x-amzn-trace-id": "Root=1-63f2afb9-421dd2d9084859bf3f1b3348",
+    "x-forwarded-for": "86.82.136.74",
+    "x-forwarded-port": "443",
+    "x-forwarded-proto": "https"
+  },
+  "requestContext": {
+    "accountId": "631452105797",
+    "apiId": "g8k7yxd5xf",
+    "authorizer": {
+      "jwt": {
+        "claims": {
+          "at_hash": "aeRbkCSqzrF36VpixFeZ3w",
+          "aud": "7ch9a3m5i6oi6kgsi9mb46lmg8",
+          "auth_time": "1676847487",
+          "cognito:groups": "[eu-central-1_MDRU6Y6DW_Google]",
+          "cognito:username": "google_100642106722028358260",
+          "email": "james.miller@developyn.com",
+          "email_verified": "false",
+          "exp": "1676851087",
+          "iat": "1676847487",
+          "identities": "[map[dateCreated:1616284583983 issuer:<nil> primary:true providerName:Google providerType:Google userId:100642106722028358260]]",
+          "iss": "https://cognito-idp.eu-central-1.amazonaws.com/eu-central-1_MDRU6Y6DW",
+          "name": "James Miller",
+          "nonce": "DpEnCaNcdsHiTnbidwWBAx_DYeI5OmiYZycW5SylipE5XmXvkGiXMmNcv014UX_Vw6gDRYu9SLHcIdgIl7-Pu633oD-wWXt2rPaRvsfHTv7fKujUg7pwOG7_Z638Zrijm9KkahcO4IjIyIBCh67Ds3i5f1v7Z0QPXP49IhPDeuA",
+          "picture": "https://lh3.googleusercontent.com/a/AEdFTp4unmPEzBFt0ITipRxjw8vKzfrSc5IqOEX7auD0=s96-c",
+          "sub": "325b3168-3bd4-4236-b85e-1f6ab4422a1b",
+          "token_use": "id"
+        },
+        "scopes": null
+      }
+    },
+    "domainName": "g8k7yxd5xf.execute-api.eu-central-1.amazonaws.com",
+    "domainPrefix": "g8k7yxd5xf",
+    "http": {
+      "method": "POST",
+      "path": "/kebabs/claim",
+      "protocol": "HTTP/1.1",
+      "sourceIp": "86.82.136.74",
+      "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+    },
+    "requestId": "AnBlFg9rFiAEPJg=",
+    "routeKey": "POST /kebabs/claim",
+    "stage": "$default",
+    "time": "19/Feb/2023:23:24:41 +0000",
+    "timeEpoch": 1676849081806
+  },
+  "body": "{\"quantity\":1,\"claimDate\":\"Mon Feb 20 2023\"}",
+  "isBase64Encoded": false
+}

@@ -9,6 +9,10 @@
   "author": "James Miller",
   "license": "ISC",
   "devDependencies": {
+    "aws-sdk": "^2.1318.0",
     "serverless-dotenv-plugin": "^3.8.2"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
   }
 }

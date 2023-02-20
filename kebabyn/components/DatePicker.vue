@@ -200,10 +200,10 @@ export default {
   name: 'DatePicker',
   props: {
     minDate: {
-      type: Date,
+      type: [Date, String],
     },
     maxDate: {
-      type: Date,
+      type: [Date, String],
     },
   },
   data() {

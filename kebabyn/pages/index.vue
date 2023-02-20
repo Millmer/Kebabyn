@@ -34,7 +34,7 @@
               <Button size="md" :onClick="() => (showAddKebab = true)"
                 >Add Kebab</Button
               >
-              <Button size="md" :onClick="getKebabs">See History</Button>
+              <Button size="md" :onClick="showHistory">See History</Button>
             </div>
           </transition>
 
@@ -49,17 +49,28 @@
             <div v-if="showAddKebab" class="mt-5 md:col-span-2 md:mt-0">
               <div class="px-4 py-5 sm:p-6 w-1/2 m-auto">
                 <p class="text-base">
-                  You have 2 years supply of kebabs from Feb 2023 until Feb 2025
+                  You have a 2 years supply of kebabs from Feb 2023 until Feb
+                  2025
                 </p>
                 <p class="text-base mb-4">
                   Choose a date and input how many kebabs you had<sup>*</sup>
                 </p>
-                <div class="flex flex-col items-center justify-evenly space-y-10 mb-8 lg:items-start md:space-y-0 md:space-x-10 md:flex-row md:mb-6">
+                <div
+                  class="
+                    flex flex-col
+                    items-center
+                    justify-evenly
+                    space-y-10
+                    mb-8
+                    lg:items-start
+                    md:space-y-0 md:space-x-10 md:flex-row md:mb-6
+                  "
+                >
                   <CounterInput
                     name="Kebab Count"
                     :min="1"
                     :max="2"
-                    v-model="registerKebabForm.amount"
+                    v-model="claimKebabForm.quantity"
                   />
                   <DatePicker
                     @input="dateChosen"
@@ -79,7 +90,7 @@
                     sm:px-0
                   "
                 >
-                  <Button size="md" full :onClick="registerKebab">Add</Button>
+                  <Button size="md" full :onClick="claimKebab">Add</Button>
                   <Button size="md" :onClick="() => (showAddKebab = false)"
                     >Back</Button
                   >
@@ -103,22 +114,47 @@ export default {
   data() {
     return {
       showAddKebab: false,
-      numberOfKebabs: 20,
-      kebabs: [],
-      registerKebabForm: {
-        amount: 1,
+      numberOfKebabs: 0,
+      claims: [],
+      claimKebabForm: {
+        quantity: 1,
+        claimDate: new Date().toDateString(),
       },
-      chosenDate: '',
     }
+  },
+  mounted() {
+    this.getClaims()
   },
   methods: {
     dateChosen(value) {
-      this.chosenDate = value
+      this.claimKebabForm.claimDate = value
     },
-    registerKebab() {
-      this.numberOfKebabs++
+    async claimKebab() {
+      try {
+        const response = await this.$http.post('/kebabs/claim', {
+          body: { ...this.claimKebabForm },
+        })
+        this.$toast.success(response.message)
+        this.numberOfKebabs++
+        this.showAddKebab = false
+      } catch (err) {
+        console.error(err)
+      }
     },
-    getKebabs() {
+    async getClaims() {
+      try {
+        const response = await this.$http.get(
+          { skipCache: true },
+          '/kebabs/list'
+        )
+        this.claims = response.claims
+        this.numberOfKebabs = response.count
+      } catch (error) {
+        console.error(error)
+        this.claims = []
+      }
+    },
+    showHistory() {
       this.$router.push({ path: '/history' })
     },
   },

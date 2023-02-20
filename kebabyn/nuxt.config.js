@@ -99,7 +99,7 @@ export default {
   toast: {
     position: 'bottom-left',
     type: 'outline',
-    duration: 1500,
+    duration: 2000,
     keepOnHover: true,
   },
 

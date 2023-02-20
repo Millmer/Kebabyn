@@ -19,18 +19,26 @@ provider:
           - - 'https://cognito-idp.${self:provider.region}.amazonaws.com/'
             - !Ref KebabynUserPool
         audience: !Ref KebabynUserPoolClient
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - dynamodb:Query
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource:
-        - arn:aws:dynamodb:${self:provider.region}:631452105797:table/kebabyn-${self:custom.stage}
-        - arn:aws:dynamodb:${self:provider.region}:631452105797:table/kebabyn-${self:custom.stage}/index/*
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - dynamodb:Query
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - arn:aws:dynamodb:${self:provider.region}:631452105797:table/kebabyn-${self:custom.stage}
+            - arn:aws:dynamodb:${self:provider.region}:631452105797:table/kebabyn-${self:custom.stage}/index/*
   environment:
     DYNAMODB_TABLE_NAME: kebabyn-${self:custom.stage}
+
+package:
+  patterns:
+    - '!kebabyn/**'
+    - '!**.sh'
+    - '!**/events/**'
 
 custom:
   stage: "${opt:stage, self:provider.stage}"
@@ -38,15 +46,15 @@ custom:
   dirPath: kebabyn
 
 functions:
-  registerKebab:
-    handler: back/handler.registerKebab
+  claimKebab:
+    handler: back/handler.claimKebab
     events:
       - httpApi:
-          path: /kebabs/register
+          path: /kebabs/claim
           method: POST
           authorizer: KebabynAuthorizer
-  listKebabs:
-    handler: back/handler.listKebabRegistrations
+  listKebabClaims:
+    handler: back/handler.listKebabClaims
     events:
       - httpApi:
           path: /kebabs/list

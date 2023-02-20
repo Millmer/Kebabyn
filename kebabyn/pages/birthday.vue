@@ -24,7 +24,7 @@
           <div class="flex flex-col space-y-3">
             <p class="text-lg">You have a years supply of kebabs<sup>*</sup></p>
 
-            <p class="text-base">Come back soon to register your first!</p>
+            <p class="text-base">Come back soon to claim your first!</p>
             <p class="text-sm">
               Bring proof of who you are, I'll be checking 🧐
             </p>
@@ -100,7 +100,7 @@ export default {
     },
     async getKebabs() {
       try {
-        this.kebabs = await this.$http.get('/kebabs/list')
+        this.kebabs = await this.$http.get({ skipCache: true }, '/kebabs/list')
       } catch (error) {
         this.kebabs = []
       }
